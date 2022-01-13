@@ -7,20 +7,24 @@ namespace ValidationFramework
     /// </summary>
     public class PropertyManager
     {
-        /// <summary>
-        /// The propertiy information cache.
-        /// </summary>
-        private static Dictionary<Type, Dictionary<string, PropertyData>> typeProperties = new Dictionary<Type, Dictionary<string, PropertyData>>();
+        private static PropertyManager? instance;
+        private Dictionary<Type, Dictionary<string, PropertyData>> typeProperties = new Dictionary<Type, Dictionary<string, PropertyData>>();
 
         private PropertyManager()
         {
+        }
+        public static PropertyManager getInstance()
+        {
+            if (instance == null)
+                instance = new PropertyManager();
+            return instance;
         }
         /// <summary>
         /// Gets the properties for the specified type.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns>The property information.</returns>
-        public static Dictionary<string, PropertyData> GetProperties(Type type)
+        public Dictionary<string, PropertyData> GetProperties(Type type)
         {
             // TODO: should we include fields as well?
             BindingFlags bindings = BindingFlags.Public | BindingFlags.Instance;
@@ -32,7 +36,7 @@ namespace ValidationFramework
                 // get property information
                 foreach (var propertyInfo in type.GetProperties(bindings))
                 {
-                    properties.Add(propertyInfo.Name, new PropertyData(propertyInfo, propertyInfo.GetCustomAttributes<ValidationAttribute>(true).Cast<ValidationAttribute>().OrderByDescending(x => x.ValidationPriority).ToList()));
+                    properties.Add(propertyInfo.Name, new PropertyData(propertyInfo, propertyInfo.GetCustomAttributes<ValidationAttribute>(true).Cast<ValidationAttribute>().ToList()));
                 }
 
                 // cache property information

@@ -2,7 +2,7 @@ using ValidationFramework;
 public class Example : Validatable
 {
     [MustMatch(@"^[\w ]+$")]
-    [CannotBeLongerThan(20)]
+    [CannotBeLongerThan(3)]
     [CannotBeNullOrEmpty()]
     public string? Name
     {

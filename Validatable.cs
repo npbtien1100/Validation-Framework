@@ -68,7 +68,8 @@
             object propertyValue;
 
             // get property value
-            var properties = PropertyManager.GetProperties(this.GetType());
+            PropertyManager propertyManager = PropertyManager.getInstance();
+            var properties = propertyManager.GetProperties(this.GetType());
 
             if (properties.TryGetValue(propertyName, out PropertyData propertyData))
             {
@@ -96,7 +97,9 @@
             this.CannotBeNull();
 
             ValidationMessageCollection messages = new ValidationMessageCollection();
-            var propertyNames = PropertyManager.GetProperties(this.GetType()).Keys;
+
+            PropertyManager propertyManager = PropertyManager.getInstance();
+            var propertyNames = propertyManager.GetProperties(this.GetType()).Keys;
 
             foreach (var propertyName in propertyNames)
             {
@@ -122,7 +125,9 @@
             propertyName.CannotBeNullOrEmpty();
 
             ValidationMessageCollection messages = new ValidationMessageCollection();
-            var validationAttributes = PropertyManager.GetProperties(this.GetType())[propertyName].ValidationAttributes;
+
+            PropertyManager propertyManager = PropertyManager.getInstance();
+            var validationAttributes = propertyManager.GetProperties(this.GetType())[propertyName].ValidationAttributes;
             bool isValid;
 
             // perform attribute based validation
@@ -140,14 +145,11 @@
 
                 if (!isValid)
                 {
-                    var messageKey = validationAttribute.MessageKey ?? validationAttribute.GetDefaultMessageKey() ?? "UndefinedMessageKey";
-                    var message = validationAttribute.Message ?? validationAttribute.GetDefaultMessage() ?? "Undefined message.";
-                    var messageParameters = validationAttribute.MessageParameters;
+                    var message = validationAttribute.GetMessage();
                     var validationLevel = validationAttribute.ValidationLevel;
-                    var validationPriority = validationAttribute.ValidationPriority;
 
                     // value is invalid -> add it to the list
-                    messages.Add(new ValidationMessage(message, messageParameters, this, propertyName, validationLevel));
+                    messages.Add(new ValidationMessage(message, this, propertyName, validationLevel));
                 }
 
             }
