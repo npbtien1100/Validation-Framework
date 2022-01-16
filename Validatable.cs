@@ -28,7 +28,7 @@
         /// <returns>
         /// The list of validation messages.
         /// </returns>
-        public virtual ValidationMessageCollection Validate(string propertyName, object propertyValue)
+        public virtual ValidationResult Validate(string propertyName, object propertyValue)
         {
             return this.ValidateAttributes(propertyName, propertyValue);
         }
@@ -36,7 +36,7 @@
         {
             this.CannotBeNull();
 
-            return !this.Validate(propertyName).Any(x => x.ValidationLevel == ValidationLevel.Error);
+            return this.Validate(propertyName).IsValid();
         }
 
         /// <summary>
@@ -50,7 +50,7 @@
         {
             this.CannotBeNull();
 
-            return !this.Validate().Any(x => x.ValidationLevel == ValidationLevel.Error);
+            return this.Validate().IsValid();
         }
 
         /// <summary>
@@ -59,12 +59,12 @@
         /// <param name="validationSource">The validation source.</param>
         /// <param name="propertyName">Name of the property.</param>
         /// <returns>The collection of validation mesasges.</returns>
-        public ValidationMessageCollection Validate(string propertyName)
+        public ValidationResult Validate(string propertyName)
         {
             this.CannotBeNull();
             propertyName.CannotBeNullOrEmpty();
 
-            ValidationMessageCollection messages = new ValidationMessageCollection();
+            ValidationResult result = new CompositeResult();
             object propertyValue;
 
             // get property value
@@ -78,11 +78,11 @@
                 {
                     propertyValue = propertyData.PropertyInfo.GetValue(this);
 
-                    messages.AddRange(this.Validate(propertyName, propertyValue));
+                    result = this.Validate(propertyName, propertyValue);
                 }
             }
 
-            return messages;
+            return result;
         }
 
         /// <summary>
@@ -92,18 +92,18 @@
         /// <returns>
         /// The collection of validation mesasges.
         /// </returns>
-        public ValidationMessageCollection Validate()
+        public ValidationResult Validate()
         {
             this.CannotBeNull();
 
-            ValidationMessageCollection messages = new ValidationMessageCollection();
+            CompositeResult messages = new CompositeResult();
 
             PropertyManager propertyManager = PropertyManager.getInstance();
             var propertyNames = propertyManager.GetProperties(this.GetType()).Keys;
 
             foreach (var propertyName in propertyNames)
             {
-                messages.AddRange(this.Validate(propertyName));
+                messages.AddResult(this.Validate(propertyName));
             }
 
             return messages;
@@ -119,12 +119,12 @@
         /// <returns>
         /// The collection of validation mesasges.
         /// </returns>
-        protected ValidationMessageCollection ValidateAttributes(string propertyName, object propertyValue)
+        protected ValidationResult ValidateAttributes(string propertyName, object propertyValue)
         {
             this.CannotBeNull();
             propertyName.CannotBeNullOrEmpty();
 
-            ValidationMessageCollection messages = new ValidationMessageCollection();
+            List<ValidationFailure> failures = new List<ValidationFailure>();
 
             PropertyManager propertyManager = PropertyManager.getInstance();
             var validationAttributes = propertyManager.GetProperties(this.GetType())[propertyName].ValidationAttributes;
@@ -149,12 +149,12 @@
                     var validationLevel = validationAttribute.ValidationLevel;
 
                     // value is invalid -> add it to the list
-                    messages.Add(new ValidationMessage(message, this, propertyName, validationLevel));
+                    failures.Add(new ValidationFailure(message, validationLevel));
                 }
 
             }
 
-            return messages;
+            return new LeafResult(propertyName, propertyValue, failures);
         }
         #endregion Public Methods
     }
