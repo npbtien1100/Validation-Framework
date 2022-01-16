@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ValidationFramework
+﻿namespace ValidationFramework
 {
     /// <summary>
     /// The validation attribute demanding the value is not equal to null.

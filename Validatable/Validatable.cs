@@ -31,7 +31,7 @@
         public virtual ValidationResult Validate(string propertyName, object propertyValue)
         {
             return this.ValidateAttributes(propertyName, propertyValue);
-        }
+        } 
         public bool IsValid(string propertyName)
         {
             this.CannotBeNull();
