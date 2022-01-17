@@ -2,9 +2,6 @@ using System.Reflection;
 
 namespace ValidationFramework
 {
-    /// <summary>
-    /// Reflection extension methods.
-    /// </summary>
     public class PropertyManager
     {
         private static PropertyManager? instance;
@@ -19,10 +16,9 @@ namespace ValidationFramework
                 instance = new PropertyManager();
             return instance;
         }
-        
+
         public Dictionary<string, PropertyData> GetProperties(Type type)
         {
-            // TODO: should include fields?
             BindingFlags bindings = BindingFlags.Public | BindingFlags.Instance;
 
             if (!typeProperties.TryGetValue(type, out Dictionary<string, PropertyData> properties))

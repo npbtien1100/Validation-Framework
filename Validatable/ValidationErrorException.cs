@@ -27,16 +27,19 @@
         public string PropertyName
         {
             get;
+            private set;
         }
 
         public Type ValidationAttributeType
         {
             get;
+            private set;
         }
 
         public Type ValidationSourceType
         {
             get;
+            private set;
         }
 
         #endregion Public Properties
