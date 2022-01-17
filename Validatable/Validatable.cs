@@ -3,7 +3,7 @@
     /// <summary>
     /// The validatable base class.
     /// </summary>
-    public abstract class Validatable : IValidatable
+    public abstract class Validatable
     {
         #region Public Methods
         public virtual ValidationResult Validate(string propertyName, object propertyValue)
