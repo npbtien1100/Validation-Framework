@@ -2,7 +2,6 @@ namespace ValidationFramework
 {
     public class LeafResult : ValidationResult
     {
-        private List<ValidationFailure> failures;
 
         public LeafResult()
         {

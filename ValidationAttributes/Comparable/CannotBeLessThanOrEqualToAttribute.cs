@@ -1,47 +1,40 @@
 ﻿namespace ValidationFramework
 {
     /// <summary>
-    /// The validation attribute demanding the value is of specified type.
+    /// The validation attribute demanding the value is not less than or equal to the specified limit.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    public sealed class MustBeTypeOfAttribute : ValidationAttribute
+    public sealed class CannotBeLessThanOrEqualToAttribute : ValidationAttribute
     {
-        #region Public Constructors
-        public MustBeTypeOfAttribute(Type type)
-                    : this()
+
+        public CannotBeLessThanOrEqualToAttribute(object minValue)
+            : this()
         {
-            this.Type = type;
-
-            this.MessageParameters = new List<object> { this.Type.Name };
+            this.MinValue = (IComparable)minValue;
         }
-
-        #endregion Public Constructors
 
         #region Private Constructors
-        private MustBeTypeOfAttribute()
+        private CannotBeLessThanOrEqualToAttribute()
         {
         }
-
         #endregion Private Constructors
 
         #region Public Properties
-        public Type Type
+        public IComparable MinValue
         {
             get;
+            private set;
         }
 
         #endregion Public Properties
 
-        #region Public Methods
         protected override string GetDefaultMessage()
         {
-            return "Value must be type of {0}.";
+            return "Value cannot be less than or equal to {0}.";
         }
 
         public override bool IsValid(object value)
         {
-            this.Type.CannotBeNull();
-
             if (value == null ||
                 value == DBNull.Value)
             {
@@ -49,15 +42,17 @@
             }
             else
             {
-                return value.GetType() == this.Type;
+                this.MinValue.CannotBeNull();
+
+                value.MustBeTypeOf(this.MinValue.GetType());
+
+                return ((IComparable)value).CompareTo(this.MinValue) > 0;
             }
         }
 
         protected override IEnumerable<object> GetParameters()
         {
-            return new object[] { this.Type.Name };
+            return new object[] { this.MinValue };
         }
-
-        #endregion Public Methods
     }
 }

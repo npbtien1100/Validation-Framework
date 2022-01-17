@@ -3,7 +3,7 @@ namespace ValidationFramework
     public class CompositeResult : ValidationResult
     {
         private Dictionary<string, ValidationResult> errors;
-        private List<ValidationFailure> failures;
+    
         public CompositeResult()
         {
             errors = new Dictionary<string, ValidationResult>();

@@ -20,13 +20,13 @@ namespace ValidationFramework
             get;
             set;
         }
-        protected IEnumerable<object> MessageParameters;
-        // {
-        //     get
-        //     {
-        //         return this.GetParameters();
-        //     }
-        // }
+        protected IEnumerable<object> MessageParameters
+        {
+            get
+            {
+                return this.GetParameters();
+            }
+        }
         public ValidationLevel ValidationLevel
         {
             get;

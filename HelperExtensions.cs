@@ -226,5 +226,37 @@ namespace ValidationFramework
 
             return value.CompareTo(minValue) > 0;
         }
+        public static T MustBeGreaterThanOrEqualTo<T>(this T value, T minValue, Action errorHandler = null) where T : IComparable
+        {
+            if (!value.IsGreaterThanOrEqualTo(minValue))
+            {
+                if (errorHandler.IsNull())
+                {
+                    throw new ArgumentException($"Value must be greater than or equal to {minValue}.");
+                }
+                else
+                {
+                    errorHandler();
+                }
+            }
+
+            return value;
+        }
+        public static T MustBeLessThanOrEqualTo<T>(this T value, T maxValue, Action errorHandler = null) where T : IComparable
+        {
+            if (!value.IsLessThanOrEqualTo(maxValue))
+            {
+                if (errorHandler.IsNull())
+                {
+                    throw new ArgumentException($"Value must be less than or equal to {maxValue}.");
+                }
+                else
+                {
+                    errorHandler();
+                }
+            }
+
+            return value;
+        }
     }
 }

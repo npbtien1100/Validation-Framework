@@ -3,35 +3,13 @@
     /// <summary>
     /// The validatable base class.
     /// </summary>
-    /// <seealso cref="ValidationFramework.IValidatable" />
     public abstract class Validatable : IValidatable
     {
         #region Public Methods
-
-        /// <summary>
-        /// Gets the list of currently active validation contexts.
-        /// </summary>
-        /// <returns>
-        /// The list of currently active validation context.
-        /// </returns>
-        // public virtual IEnumerable<string> GetActiveValidationContexts()
-        // {
-        //     return Array.Empty<string>();
-        // }
-
-        /// <summary>
-        /// Validates the specified property name.
-        /// </summary>
-        /// <param name="propertyName">Name of the property.</param>
-        /// <param name="propertyValue">The property value.</param>
-        /// <param name="validationContext">The validation context.</param>
-        /// <returns>
-        /// The list of validation messages.
-        /// </returns>
         public virtual ValidationResult Validate(string propertyName, object propertyValue)
         {
             return this.ValidateAttributes(propertyName, propertyValue);
-        } 
+        }
         public bool IsValid(string propertyName)
         {
             this.CannotBeNull();
@@ -39,13 +17,6 @@
             return this.Validate(propertyName).IsValid();
         }
 
-        /// <summary>
-        /// Checks if the specified specified validation source is valid (has no invalid properties).
-        /// </summary>
-        /// <param name="validationSource">The validation source.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified validation source is valid; otherwise, <c>false</c>.
-        /// </returns>
         public bool IsValid()
         {
             this.CannotBeNull();
@@ -53,12 +24,6 @@
             return this.Validate().IsValid();
         }
 
-        /// <summary>
-        /// Validates the specified property of the specified validation source.
-        /// </summary>
-        /// <param name="validationSource">The validation source.</param>
-        /// <param name="propertyName">Name of the property.</param>
-        /// <returns>The collection of validation mesasges.</returns>
         public ValidationResult Validate(string propertyName)
         {
             this.CannotBeNull();
@@ -85,13 +50,6 @@
             return result;
         }
 
-        /// <summary>
-        /// Validates the the specified validation source.
-        /// </summary>
-        /// <param name="validationSource">The validation source.</param>
-        /// <returns>
-        /// The collection of validation mesasges.
-        /// </returns>
         public ValidationResult Validate()
         {
             this.CannotBeNull();
@@ -109,16 +67,6 @@
             return messages;
         }
 
-        /// <summary>
-        /// Validates the specified property of the specified validation source for the specified property value in specified validation context by using validation attributes.
-        /// </summary>
-        /// <param name="validationSource">The validation source.</param>
-        /// <param name="propertyName">The property name.</param>
-        /// <param name="propertyValue">The property value.</param>
-        /// <param name="validationContext">The validation context.</param>
-        /// <returns>
-        /// The collection of validation mesasges.
-        /// </returns>
         protected ValidationResult ValidateAttributes(string propertyName, object propertyValue)
         {
             this.CannotBeNull();

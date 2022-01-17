@@ -6,7 +6,7 @@
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public sealed class CannotBeNullAttribute : ValidationAttribute
     {
-        #region Public Methods
+
         protected override string GetDefaultMessage()
         {
             return "Value cannot be null.";
@@ -17,7 +17,5 @@
             return value != null &&
                    value != DBNull.Value;
         }
-
-        #endregion Public Methods
     }
 }

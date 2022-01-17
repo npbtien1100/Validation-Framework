@@ -4,6 +4,8 @@ namespace ValidationFramework
 {
     public abstract class ValidationResult
     {
+        protected List<ValidationFailure> failures;
+
         public ValidationResult()
         {
         }

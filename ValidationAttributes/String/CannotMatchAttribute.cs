@@ -1,35 +1,24 @@
-using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace ValidationFramework
 {
     /// <summary>
-    /// The validation attribute demanding the value matches the specified regular expression.
+    /// The validation attribute demanding the value does not match the specified regular expression.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    public sealed class MustMatchAttribute : ValidationAttribute
+    public sealed class CannotMatchAttribute : ValidationAttribute
     {
-        #region Public Constructors
-        public MustMatchAttribute(string regex, RegexOptions regexOptions = RegexOptions.None)
+        public CannotMatchAttribute(string regex, RegexOptions regexOptions = RegexOptions.None)
             : this()
         {
             regex.CannotBeNullOrEmpty();
 
             this.Regex = new Regex(regex, regexOptions);
-
-            this.MessageParameters = new List<object> { this.Regex.ToString() };
         }
 
-        #endregion Public Constructors
-
-        #region Private Constructors
-
-        private MustMatchAttribute()
+        private CannotMatchAttribute()
         {
         }
-
-        #endregion Private Constructors
 
         #region Public Properties
         public Regex Regex
@@ -38,11 +27,9 @@ namespace ValidationFramework
         }
 
         #endregion Public Properties
-
-        #region Public Methods
         protected override string GetDefaultMessage()
         {
-            return "Value must match {0}.";
+            return "Value cannot match {0}.";
         }
 
         public override bool IsValid(object value)
@@ -56,18 +43,13 @@ namespace ValidationFramework
             {
                 value.MustBeTypeOf(typeof(string));
 
-                return this.Regex.IsMatch(value as string);
+                return !this.Regex.IsMatch(value as string);
             }
         }
 
-        #endregion Public Methods
-
-        #region Protected Methods
         protected override IEnumerable<object> GetParameters()
         {
             return new object[] { this.Regex.ToString() };
         }
-
-        #endregion Protected Methods
     }
 }

@@ -19,14 +19,10 @@ namespace ValidationFramework
                 instance = new PropertyManager();
             return instance;
         }
-        /// <summary>
-        /// Gets the properties for the specified type.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>The property information.</returns>
+        
         public Dictionary<string, PropertyData> GetProperties(Type type)
         {
-            // TODO: should we include fields as well?
+            // TODO: should include fields?
             BindingFlags bindings = BindingFlags.Public | BindingFlags.Instance;
 
             if (!typeProperties.TryGetValue(type, out Dictionary<string, PropertyData> properties))

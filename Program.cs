@@ -6,17 +6,19 @@
 
 Example example = new Example();
 example.Name = "Test";
+example.age = 15;
 
-bool isObjectValid = example.IsValid(); // isValid == true
-bool isPropertyValid = example.IsValid(nameof(example.Name)); // isValid == true
-ValidationResult objectValidationMessages = example.Validate(); // validationMessages.Count == 0
-ValidationResult propertyValidationMessages = example.Validate(nameof(example.Name)); // validationMessages.Count == 0
+bool isObjectValid = example.IsValid(); // isValid == false
+bool isPropertyValid = example.IsValid(nameof(example.Name)); // isValid == false
+ValidationResult objectValidationMessages = example.Validate();
+ValidationResult propertyValidationMessages = example.Validate(nameof(example.Name));
 
 Example example2 = new Example();
 example2.Name = null;
+example2.age = 25;
 
 bool isObjectValid2 = example2.IsValid(); // isValid == false
 bool isPropertyValid2 = example2.IsValid(nameof(example2.Name)); // isValid == false
-ValidationResult objectValidationMessages2 = example2.Validate(); // validationMessages.Count == 1
+ValidationResult objectValidationMessages2 = example2.Validate();
 var dict = objectValidationMessages2.GetAllFailures();
-ValidationResult propertyValidationMessages2 = example2.Validate(nameof(example2.Name)); // validationMessages.Count == 1
+ValidationResult propertyValidationMessages2 = example2.Validate(nameof(example2.Name));

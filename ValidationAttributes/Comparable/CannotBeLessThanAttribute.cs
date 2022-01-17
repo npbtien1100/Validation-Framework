@@ -1,50 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ValidationFramework
+﻿namespace ValidationFramework
 {
     /// <summary>
-    /// The validation attribute demanding the value is subtype of specified type.
+    /// The validation attribute demanding the value is not less than the specified limit.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    public sealed class MustBeSubTypeOfAttribute : ValidationAttribute
+    public sealed class CannotBeLessThanAttribute : ValidationAttribute
     {
-        #region Public Constructors
-        public MustBeSubTypeOfAttribute(Type type)
+        public CannotBeLessThanAttribute(object minValue)
             : this()
         {
-            this.Type = type;
-
-            this.MessageParameters = new List<object> { this.Type.Name };
+            this.MinValue = (IComparable)minValue;
         }
 
-        #endregion Public Constructors
-
         #region Private Constructors
-        private MustBeSubTypeOfAttribute()
+        private CannotBeLessThanAttribute()
         {
         }
 
         #endregion Private Constructors
 
         #region Public Properties
-        public Type Type
+        public IComparable MinValue
         {
             get;
+            private set;
         }
 
         #endregion Public Properties
-
-        #region Public Methods
         protected override string GetDefaultMessage()
         {
-            return "Value must be sub-type of {0}.";
+            return "Value cannot be less than {0}.";
         }
 
         public override bool IsValid(object value)
         {
-            this.Type.CannotBeNull();
-
             if (value == null ||
                 value == DBNull.Value)
             {
@@ -52,16 +41,18 @@ namespace ValidationFramework
             }
             else
             {
-                return value.IsSubTypeOf(this.Type);
+                this.MinValue.CannotBeNull();
+
+                value.MustBeTypeOf(this.MinValue.GetType());
+
+                return ((IComparable)value).CompareTo(this.MinValue) >= 0;
             }
         }
-
-        #endregion Public Methods
 
         #region Protected Methods
         protected override IEnumerable<object> GetParameters()
         {
-            return new object[] { this.Type.Name };
+            return new object[] { this.MinValue };
         }
 
         #endregion Protected Methods

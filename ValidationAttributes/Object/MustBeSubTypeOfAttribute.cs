@@ -1,35 +1,29 @@
-using System.Collections;
-
-namespace ValidationFramework
+﻿namespace ValidationFramework
 {
     /// <summary>
-    /// The validation attribute demanding the value is not longer than the specified limit.
+    /// The validation attribute demanding the value is subtype of specified type.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    public sealed class CannotBeLongerThanAttribute : ValidationAttribute
+    public sealed class MustBeSubTypeOfAttribute : ValidationAttribute
     {
         #region Public Constructors
-        public CannotBeLongerThanAttribute(int maxLength)
+        public MustBeSubTypeOfAttribute(Type type)
             : this()
         {
-            maxLength.CannotBeLessThanOrEqualTo(0);
-
-            this.MaxLength = maxLength;
-
-            this.MessageParameters = new List<object> { maxLength };
+            this.Type = type;
         }
 
         #endregion Public Constructors
 
         #region Private Constructors
-        private CannotBeLongerThanAttribute()
+        private MustBeSubTypeOfAttribute()
         {
         }
 
         #endregion Private Constructors
 
         #region Public Properties
-        public int MaxLength
+        public Type Type
         {
             get;
         }
@@ -39,11 +33,13 @@ namespace ValidationFramework
         #region Public Methods
         protected override string GetDefaultMessage()
         {
-            return "Value cannot have more than or equal to {0} items.";
+            return "Value must be sub-type of {0}.";
         }
 
         public override bool IsValid(object value)
         {
+            this.Type.CannotBeNull();
+
             if (value == null ||
                 value == DBNull.Value)
             {
@@ -51,17 +47,7 @@ namespace ValidationFramework
             }
             else
             {
-                value.MustBeSubTypeOf(typeof(IEnumerable));
-
-                var iterator = (value as IEnumerable).GetEnumerator();
-                var count = 0;
-
-                while (iterator.MoveNext())
-                {
-                    count++;
-                }
-
-                return count <= this.MaxLength;
+                return value.IsSubTypeOf(this.Type);
             }
         }
 
@@ -70,7 +56,7 @@ namespace ValidationFramework
         #region Protected Methods
         protected override IEnumerable<object> GetParameters()
         {
-            return new object[] { this.MaxLength };
+            return new object[] { this.Type.Name };
         }
 
         #endregion Protected Methods

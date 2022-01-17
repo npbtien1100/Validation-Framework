@@ -9,4 +9,11 @@ public class Example : Validatable
         get;
         set;
     }
+
+    [MustBeBetween(1, 20)]
+    public int age
+    {
+        get;
+        set;
+    }
 }
