@@ -8,12 +8,10 @@ namespace ValidationFramework
             failures = new List<ValidationFailure>();
         }
 
-        public LeafResult(string propertyName, object propertyValue, List<ValidationFailure> failures)
+        public LeafResult(string propertyName, object propertyValue, List<ValidationFailure> failures) : base(propertyName, propertyValue, failures)
         {
-            PropertyName = propertyName;
-            AttemptedValue = propertyValue;
-            this.failures = failures;
         }
+
 
         public override Dictionary<string, List<ValidationFailure>> GetAllFailures()
         {
@@ -27,20 +25,6 @@ namespace ValidationFramework
             return new Dictionary<string, List<ValidationFailure>>();
         }
 
-        // public override List<ValidationResult> GetAllResults()
-        // {
-        //     throw new NotImplementedException();
-        // }
-
-        // public override ValidationResult GetResultFor(string propertyName)
-        // {
-        //     throw new NotImplementedException();
-        // }
-
-        public override bool IsLeafResult()
-        {
-            return true;
-        }
 
         public override bool IsValid()
         {

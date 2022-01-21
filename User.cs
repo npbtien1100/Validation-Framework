@@ -1,28 +1,27 @@
 using ValidationFramework;
-public class Example : Validatable
+public class User : Validatable
 {
     [MustMatch(@"^[\w ]+$")]
-    [CannotBeLongerThan(10)]
+    [CannotBeLongerThan(5)]
     [CannotBeNullOrEmpty()]
-    public string? Address
-    {
-        get;
-        set;
-    }
-
-    [CannotBeLongerThan(8)]
-    public string? Phone
+    public string? Name
     {
         get;
         set;
     }
 
     [NestedValidation()]
-    [CannotBeNull()]
-    public Example2? Example2
+    [MustBeBetween(1, 20)]
+    public int age
     {
         get;
         set;
-
+    }
+    [NestedValidation()]
+    [CannotBeNull()]
+    public Example? Example
+    {
+        get;
+        set;
     }
 }

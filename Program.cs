@@ -2,23 +2,21 @@
 
 
 
-
+Example2 example2 = new Example2();
+example2.Relatives = 2;
+example2.LastName = "Nguyen";
 
 Example example = new Example();
-example.Name = "Test";
-example.age = 15;
+example.Address = "adress 123";
+example.Phone = "123456789";
+example.Example2 = example2;
 
-bool isObjectValid = example.IsValid(); // isValid == false
-bool isPropertyValid = example.IsValid(nameof(example.Name)); // isValid == false
-ValidationResult objectValidationMessages = example.Validate();
-ValidationResult propertyValidationMessages = example.Validate(nameof(example.Name));
+User user = new User();
+user.Name = "Bao Tien";
+user.age = 25;
+user.Example = example;
 
-Example example2 = new Example();
-example2.Name = null;
-example2.age = 25;
-
-bool isObjectValid2 = example2.IsValid(); // isValid == false
-bool isPropertyValid2 = example2.IsValid(nameof(example2.Name)); // isValid == false
-ValidationResult objectValidationMessages2 = example2.Validate();
+ValidationResult objectValidationMessages2 = user.Validate();
 var dict = objectValidationMessages2.GetAllFailures();
-ValidationResult propertyValidationMessages2 = example2.Validate(nameof(example2.Name));
+ValidationResult propertyValidationMessages2 = user.Validate(nameof(user.Example));
+var temp = propertyValidationMessages2.GetAllFailures();

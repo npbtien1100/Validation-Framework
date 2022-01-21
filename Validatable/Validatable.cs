@@ -29,7 +29,7 @@
             this.CannotBeNull();
             propertyName.CannotBeNullOrEmpty();
 
-            ValidationResult result = new CompositeResult();
+            CompositeResult result = new CompositeResult();
             object propertyValue;
 
             // get property value
@@ -43,7 +43,28 @@
                 {
                     propertyValue = propertyData.PropertyInfo.GetValue(this);
 
-                    result = this.Validate(propertyName, propertyValue);
+                    LeafResult leafResult = (LeafResult)this.Validate(propertyName, propertyValue);
+                    //check is nested validation attribute
+                    if (propertyData.ContainsNestedValidationAttribute() && propertyValue != null)
+                    {
+                        try
+                        {
+                            Validatable nestedValidatable = (Validatable)propertyValue;
+                            CompositeResult nestedResult = (CompositeResult)nestedValidatable.Validate();
+
+                            //add failures
+                            result = new CompositeResult(propertyName, propertyValue, leafResult.GetAllFailures()[propertyName]);
+
+                            //nested validation result
+                            result.Results = nestedResult.Results;
+
+                            return result;
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                    }
+                    return leafResult;
                 }
             }
 

@@ -2,27 +2,50 @@ namespace ValidationFramework
 {
     public class CompositeResult : ValidationResult
     {
-        private Dictionary<string, ValidationResult> errors;
-    
+        private Dictionary<string, ValidationResult> results;
+
+        public Dictionary<string, ValidationResult> Results { get => results; set => results = value; }
+
         public CompositeResult()
         {
-            errors = new Dictionary<string, ValidationResult>();
+            results = new Dictionary<string, ValidationResult>();
             failures = new List<ValidationFailure>();
+        }
+
+        public CompositeResult(string propertyName, object propertyValue, List<ValidationFailure> failures) : base(propertyName, propertyValue, failures)
+        {
+            results = new Dictionary<string, ValidationResult>();
         }
 
         public void AddResult(ValidationResult validationResult)
         {
-            if (!errors.ContainsKey(validationResult.PropertyName))
+            if (validationResult != null && validationResult.PropertyName != null)
             {
-                errors.Add(validationResult.PropertyName, validationResult);
+                if (!results.ContainsKey(validationResult.PropertyName))
+                {
+                    results.Add(validationResult.PropertyName, validationResult);
+                    return;
+                }
+                results[validationResult.PropertyName] = validationResult;
             }
-            errors[validationResult.PropertyName] = validationResult;
+        }
+        public void AddResult(string propertyName, ValidationResult validationResult)
+        {
+            if (validationResult != null)
+            {
+                if (!results.ContainsKey(propertyName))
+                {
+                    results.Add(propertyName, validationResult);
+                    return;
+                }
+                results[propertyName] = validationResult;
+            }
         }
 
         public void RemoveResult(string propertyName)
         {
-            if (errors.ContainsKey(propertyName))
-                errors.Remove(propertyName);
+            if (results.ContainsKey(propertyName))
+                results.Remove(propertyName);
         }
         public override Dictionary<string, List<ValidationFailure>> GetAllFailures()
         {
@@ -30,9 +53,9 @@ namespace ValidationFramework
             if (PropertyName != null)
                 result.Add(PropertyName, failures);
 
-            foreach (ValidationResult error in errors.Values)
+            foreach (ValidationResult res in results.Values)
             {
-                Dictionary<string, List<ValidationFailure>> dict = error.GetAllFailures();
+                Dictionary<string, List<ValidationFailure>> dict = res.GetAllFailures();
                 foreach (string key in dict.Keys)
                 {
                     string combinKey = PropertyName != null ? PropertyName + "." + key : key;
@@ -45,11 +68,11 @@ namespace ValidationFramework
 
         public override Dictionary<string, List<ValidationFailure>> GetAllFailuresFor(string propertyName)
         {
-            if (errors.ContainsKey(propertyName))
+            if (results.ContainsKey(propertyName))
             {
                 Dictionary<string, List<ValidationFailure>> result = new Dictionary<string, List<ValidationFailure>>();
 
-                Dictionary<string, List<ValidationFailure>> dict = errors[propertyName].GetAllFailures();
+                Dictionary<string, List<ValidationFailure>> dict = results[propertyName].GetAllFailures();
                 foreach (string key in dict.Keys)
                 {
                     string combinKey = PropertyName + "." + key;
@@ -61,28 +84,12 @@ namespace ValidationFramework
             return new Dictionary<string, List<ValidationFailure>>();
         }
 
-        // public override List<ValidationResult> GetAllResults()
-        // {
-        //     if (errors.Values.Any())
-        //         return errors.Values.ToList();
-        //     return new List<ValidationResult>();
-        // }
-
-        // public override ValidationResult GetResultFor(string propertyName)
-        // {
-        //     if (errors.ContainsKey(propertyName))
-        //         return errors[propertyName];
-        //     return null;
-        // }
-
-        public override bool IsLeafResult()
-        {
-            return false;
-        }
-
         public override bool IsValid()
         {
-            foreach (ValidationResult result in errors.Values)
+            if (failures.Any())
+                return false;
+
+            foreach (ValidationResult result in results.Values)
             {
                 if (!result.IsValid())
                     return false;

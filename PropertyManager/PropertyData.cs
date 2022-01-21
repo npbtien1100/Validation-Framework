@@ -36,5 +36,9 @@ namespace ValidationFramework
         }
 
         #endregion Public Properties
+        public bool ContainsNestedValidationAttribute()
+        {
+            return ValidationAttributes.Any(x => x.GetType().Name.Equals("NestedValidationAttribute"));
+        }
     }
 }
